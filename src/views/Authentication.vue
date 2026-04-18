@@ -30,14 +30,14 @@
           </label>
         </div>
 
-        <button
-          type="button"
-          class="mt-5 w-full rounded-lg bg-primary-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary-950/50 transition hover:bg-primary-600 active:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
+        <main-button
+          full-width
+          class="mt-2"
           :disabled="sessionStore.sessionStatus.loading || !clientId.trim()"
           @click="authenticate"
         >
           {{ sessionStore.sessionStatus.loading ? 'Working…' : 'Sign in & connect' }}
-        </button>
+        </main-button>
 
         <p
           v-if="sessionStore.sessionStatus.errorMessage"
@@ -56,6 +56,7 @@ import { useRouter } from 'vue-router'
 import { Routes } from '@/router'
 import { useSessionStore } from '@/stores/session'
 import Card from '@/components/Card.vue'
+import MainButton from '@/components/MainButton.vue'
 
 const $router = useRouter()
 const sessionStore = useSessionStore()
