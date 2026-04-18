@@ -1,21 +1,18 @@
 <template>
   <main class="flex min-h-screen items-center justify-center px-4">
     <div class="w-full max-w-md">
-      <!-- Logo / wordmark -->
-      <div class="mb-8 text-center">
-        <span class="text-3xl font-bold tracking-tight text-primary-500">nosey</span>
-      </div>
+      <div class="mb-8 text-center text-3xl font-bold tracking-tight text-primary-500">nosey</div>
 
-      <!-- Card -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-black/40">
-        <h1 class="text-lg font-semibold text-white">Connect Google Sheets</h1>
+      <card title="Connect Google Sheets">
         <p class="mt-1.5 text-sm text-slate-400">
-          Requires
-          <code class="rounded bg-slate-800 px-1 py-0.5 text-primary-400">drive.file</code> +
-          <code class="rounded bg-slate-800 px-1 py-0.5 text-primary-400">spreadsheets</code>
-          scopes. A spreadsheet named
-          <strong class="font-medium text-slate-300">nosey-database</strong> will be created or
-          reopened.
+          Nosey requires access to your Google Sheets to store and manage the data it collects. We
+          will create a spreadsheet named
+          <span class="rounded bg-slate-800 px-1 py-0.5 text-primary-400">nosey-database</span> to
+          save any data you upload at a later time.
+        </p>
+        <p class="mt-1.5 text-sm text-slate-400">
+          You will need to manually create a project in the Google Cloud Console, enable the Google
+          Sheets API, and create an OAuth client to get the client ID required for authentication.
         </p>
 
         <div class="mt-6">
@@ -28,7 +25,7 @@
               type="text"
               autocomplete="off"
               placeholder="your-client-id.apps.googleusercontent.com"
-              class="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 transition focus:border-primary-600/70 focus:outline-none focus:ring-2 focus:ring-primary-600/30"
+              class="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 transition focus:outline-none focus:ring-2"
             />
           </label>
         </div>
@@ -48,7 +45,7 @@
         >
           {{ sessionStore.sessionStatus.errorMessage }}
         </p>
-      </div>
+      </card>
     </div>
   </main>
 </template>
@@ -58,6 +55,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Routes } from '@/router'
 import { useSessionStore } from '@/stores/session'
+import Card from '@/components/Card.vue'
 
 const $router = useRouter()
 const sessionStore = useSessionStore()
