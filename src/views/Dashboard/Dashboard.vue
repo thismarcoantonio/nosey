@@ -41,25 +41,7 @@
       </div>
 
       <!-- Empty state -->
-      <div
-        v-else-if="isEmpty"
-        class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 px-6 py-16 text-center"
-      >
-        <div
-          class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-950 text-primary-500"
-        >
-          <arrow-up-tray-icon class="size-6" />
-        </div>
-        <p class="mt-4 text-sm font-medium text-slate-300">No transactions yet</p>
-        <p class="mt-1 text-xs text-slate-500">Upload a CSV to get started</p>
-        <button
-          type="button"
-          class="mt-5 flex items-center gap-2 rounded-lg bg-primary-700 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-primary-950/50 transition hover:bg-primary-600"
-        >
-          <arrow-up-tray-icon class="size-3.5" />
-          Upload CSV
-        </button>
-      </div>
+      <csv-upload-state v-else-if="isEmpty" />
 
       <!-- Loaded state -->
       <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -72,12 +54,12 @@
 
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue'
-import { ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 import { useSheetsStore } from '@/stores/sheets'
 import MainHeader from '@/components/MainHeader.vue'
 import MainCard from '@/components/MainCard.vue'
 import TotalSpentCard from './TotalSpentCard.vue'
 import SpendingCard from './SpendingCard.vue'
+import CsvUploadState from './CSVUploadState.vue'
 
 const sheetsStore = useSheetsStore()
 
