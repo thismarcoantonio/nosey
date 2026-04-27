@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import { useAsyncStatus, AsyncStatus } from '@/composables/useAsyncStatus'
-import { ensureNoseyDatabase, fetchSpreadsheetRows } from '@/api/sheets'
+import { ensureNoseyDatabase, fetchSpreadsheetRows, appendRows } from '@/api/sheets'
 import type { Sheet } from '@/api/sheets'
 
 export const useSheetsStore = defineStore('sheets', () => {
@@ -45,6 +45,11 @@ export const useSheetsStore = defineStore('sheets', () => {
     }
   }
 
+  async function appendTransactions(values: string[][]) {
+    if (!sheet.value?.id) throw new Error('No spreadsheet loaded')
+    await appendRows(sheet.value.id, values)
+  }
+
   function clearSheet() {
     sheet.value = null
     rows.value = []
@@ -57,6 +62,7 @@ export const useSheetsStore = defineStore('sheets', () => {
     loadStatus,
     getOrCreateSpreadsheet,
     loadSpreadsheet,
+    appendTransactions,
     clearSheet,
   }
 })

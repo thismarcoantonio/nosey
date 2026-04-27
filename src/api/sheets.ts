@@ -56,3 +56,12 @@ export async function fetchSpreadsheetRows(spreadsheetId: string): Promise<strin
   )
   return valuesRes.data.values ?? []
 }
+
+export async function appendRows(spreadsheetId: string, values: string[][]): Promise<void> {
+  const range = 'Sheet1'
+  await api.post(
+    `/spreadsheets/${encodeURIComponent(spreadsheetId)}/values/${encodeURIComponent(range)}:append`,
+    { values },
+    { params: { valueInputOption: 'USER_ENTERED', insertDataOption: 'INSERT_ROWS' } },
+  )
+}

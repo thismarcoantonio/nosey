@@ -137,9 +137,12 @@ import { ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 import { CSVKeys } from '@/types/csv'
 import { Categories } from '@/types/categories'
 import { autoCategorise } from '@/helpers/categories'
+import { useSheetsStore } from '@/stores/sheets'
 import MainButton from '@/components/MainButton.vue'
 
 type CSVRow = { [K in CSVKeys]: string }
+
+const sheetsStore = useSheetsStore()
 
 interface PreviewRow {
   amount: number
@@ -177,9 +180,17 @@ function reset() {
   if (fileInput.value) fileInput.value.value = ''
 }
 
-function confirmImport() {
+async function confirmImport() {
   const selected = rows.value.filter((row) => row.included)
-  console.log('Importing rows:', selected)
+  const values = selected.map((row) => [
+    row.date,
+    row.description,
+    row.details,
+    String(row.amount),
+    row.category,
+  ])
+  await sheetsStore.appendTransactions(values)
+  reset()
 }
 
 function uploadCSV(file: string) {
