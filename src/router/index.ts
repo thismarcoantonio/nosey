@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
-import Dashboard from '@/views/Dashboard.vue'
+import Dashboard from '@/views/Dashboard/Dashboard.vue'
 import Authentication from '@/views/Authentication.vue'
 
 export enum Routes {

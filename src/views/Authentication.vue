@@ -3,7 +3,7 @@
     <div class="w-full max-w-md">
       <div class="mb-8 text-center text-3xl font-bold tracking-tight text-primary-500">nosey</div>
 
-      <card title="Connect Google Sheets">
+      <main-card title="Connect Google Sheets">
         <p class="mt-1.5 text-sm text-slate-400">
           Nosey requires access to your Google Sheets to store and manage the data it collects. We
           will create a spreadsheet named
@@ -45,7 +45,7 @@
         >
           {{ sessionStore.sessionStatus.errorMessage }}
         </p>
-      </card>
+      </main-card>
     </div>
   </main>
 </template>
@@ -55,7 +55,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Routes } from '@/router'
 import { useSessionStore } from '@/stores/session'
-import Card from '@/components/Card.vue'
+import MainCard from '@/components/MainCard.vue'
 import MainButton from '@/components/MainButton.vue'
 
 const $router = useRouter()

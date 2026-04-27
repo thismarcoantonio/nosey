@@ -18,6 +18,7 @@
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
     "@vueuse/core": "^13.9.0",
+    "axios": "^1.15.0",
     "pinia": "^3.0.4",
     "vue": "beta",
     "vue-router": "^5.0.4"
