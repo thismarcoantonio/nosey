@@ -1,23 +1,33 @@
 <template>
-  <div class="min-h-screen bg-slate-950">
-    <router-view />
-  </div>
+  <router-view v-if="!loading" />
 </template>
+
+<script lang="ts" setup>
+import { ref, onBeforeMount } from 'vue'
+import { useSessionStore } from '@/stores/session'
+
+const loading = ref(true)
+const sessionStore = useSessionStore()
+
+onBeforeMount(async () => {
+  loading.value = true
+  await sessionStore.init()
+  loading.value = false
+})
+</script>
 
 <style>
 @import 'tailwindcss';
 
 @theme {
-  --color-primary-50: #fff0f2;
-  --color-primary-100: #ffe0e5;
-  --color-primary-200: #ffc0cc;
-  --color-primary-300: #ff8fa3;
-  --color-primary-400: #ff5175;
-  --color-primary-500: #ff1a4b;
-  --color-primary-600: #e8002f;
-  --color-primary-700: #c10026;
-  --color-primary-800: #a00024;
-  --color-primary-900: #850024;
-  --color-primary-950: #4b000f;
+  --color-canvas: #faf3df;
+  --color-ochre: #cd9a3a;
+  --color-dusty-rose: #eddcd3;
+  --color-primary-100: #a7c89d;
+  --color-primary-300: #7ea475;
+}
+
+body {
+  @apply bg-canvas text-slate-700;
 }
 </style>

@@ -1,71 +1,62 @@
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useAsyncStatus, AsyncStatus } from '@/composables/useAsyncStatus'
-import { requestAccessToken } from '@/api/auth'
-import { useLocalStorage } from '@vueuse/core'
-
-const STORAGE_KEY = 'nosey-user-session'
-
-export interface DataSheet {
-  id: string
-  name: string
-  url?: string
-}
-
-interface PersistedSession {
-  clientId: string
-  accessToken: string
-  expiresAt: number | null
-}
-
-const emptySession: PersistedSession = {
-  clientId: '',
-  accessToken: '',
-  expiresAt: null,
-}
+import { signIn, signUp, signOut, getSession } from '@/api/auth'
+import { supabase } from '@/helpers/database'
+import type { Session } from '@supabase/supabase-js'
 
 export const useSessionStore = defineStore('session', () => {
-  const session = useLocalStorage<PersistedSession>(STORAGE_KEY, emptySession)
-  const sessionStatus = useAsyncStatus()
+  const session = ref<Session | null>(null)
+  const authStatus = useAsyncStatus()
 
-  function clearSession() {
-    session.value = emptySession
+  const isLoggedIn = computed(() => !!session.value)
+
+  supabase.auth.onAuthStateChange((_event, newSession) => {
+    session.value = newSession
+  })
+
+  async function init() {
+    session.value = await getSession()
   }
 
-  function enforceExpiry() {
-    const { accessToken, expiresAt } = session.value || {}
-    const hasAccessToken = !!accessToken
-    const isSessionValid = expiresAt != null && Date.now() < expiresAt
-    if (hasAccessToken && isSessionValid) return
-    clearSession()
-  }
-
-  const isLoggedIn = computed(() => !!session.value?.accessToken)
-
-  async function authenticate(clientId: PersistedSession['clientId']) {
-    sessionStatus.status.value = AsyncStatus.LOADING
-
+  async function login(email: string, password: string) {
+    authStatus.status.value = AsyncStatus.LOADING
+    authStatus.errorMessage.value = undefined
     try {
-      const token = await requestAccessToken(clientId)
-      session.value = {
-        accessToken: token.access_token,
-        expiresAt: Date.now() + Number(token.expires_in) * 1000,
-        clientId,
-      }
-      sessionStatus.status.value = AsyncStatus.SUCCESS
+      session.value = await signIn(email, password)
+      authStatus.status.value = AsyncStatus.SUCCESS
     } catch (error) {
-      clearSession()
-      sessionStatus.status.value = AsyncStatus.ERROR
-      sessionStatus.errorMessage.value = error instanceof Error ? error.message : String(error)
+      authStatus.status.value = AsyncStatus.ERROR
+      authStatus.errorMessage.value = error instanceof Error ? error.message : String(error)
+      throw error
     }
+  }
+
+  async function register(email: string, password: string) {
+    authStatus.status.value = AsyncStatus.LOADING
+    authStatus.errorMessage.value = undefined
+    try {
+      await signUp(email, password)
+      authStatus.status.value = AsyncStatus.SUCCESS
+    } catch (error) {
+      authStatus.status.value = AsyncStatus.ERROR
+      authStatus.errorMessage.value = error instanceof Error ? error.message : String(error)
+      throw error
+    }
+  }
+
+  async function logout() {
+    await signOut()
+    session.value = null
   }
 
   return {
     session,
-    sessionStatus,
+    authStatus,
     isLoggedIn,
-    authenticate,
-    clearSession,
-    enforceExpiry,
+    init,
+    login,
+    register,
+    logout,
   }
 })
