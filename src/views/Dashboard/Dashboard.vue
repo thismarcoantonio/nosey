@@ -44,9 +44,12 @@
       <csv-upload-state v-else-if="isEmpty" />
 
       <!-- Loaded state -->
-      <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <total-spent-card />
-        <spending-card />
+      <div v-else class="space-y-6">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <total-spent-card />
+          <spending-card />
+        </div>
+        <dashboard-list />
       </div>
     </main>
   </div>
@@ -60,6 +63,7 @@ import MainCard from '@/components/MainCard.vue'
 import TotalSpentCard from './TotalSpentCard.vue'
 import SpendingCard from './SpendingCard.vue'
 import CsvUploadState from './CSVUploadState.vue'
+import DashboardList from './DashboardList.vue'
 
 const sheetsStore = useSheetsStore()
 

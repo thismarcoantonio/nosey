@@ -50,7 +50,7 @@ export async function fetchSpreadsheetRows(spreadsheetId: string): Promise<strin
     { params: { fields: 'sheets(properties(title))' } },
   )
   const firstTitle = metaRes.data.sheets?.[0]?.properties?.title ?? 'Sheet1'
-  const range = `'${firstTitle}'!A1:E1`
+  const range = `${firstTitle}`
   const valuesRes = await api.get<{ values?: string[][] }>(
     `/spreadsheets/${encodeURIComponent(spreadsheetId)}/values/${encodeURIComponent(range)}`,
   )

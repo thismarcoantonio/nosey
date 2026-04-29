@@ -12,7 +12,9 @@
         <option value="all-time">All time</option>
       </select>
     </template>
-    <p class="mt-4 text-4xl font-bold tracking-tight text-white">$0.00</p>
+    <p class="mt-4 text-4xl font-bold tracking-tight text-white">
+      {{ totalSpent }}
+    </p>
     <p class="mt-1 text-xs text-slate-500">No transactions recorded yet</p>
     <main-button class="mt-4" outlined>
       <arrow-up-tray-icon class="size-3.5 text-primary-500" />
@@ -22,10 +24,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
+import { useSheetsStore } from '@/stores/sheets'
 import MainButton from '@/components/MainButton.vue'
 import MainCard from '@/components/MainCard.vue'
 
+const sheetsStore = useSheetsStore()
+
 const timeframe = ref('this-month')
+
+const totalSpent = computed(() =>
+  sheetsStore.rows.reduce((total, row) => {
+    const amount = parseFloat(row[3] ?? '0')
+    return total + (isNaN(amount) ? 0 : amount)
+  }, 0),
+)
 </script>
