@@ -11,7 +11,7 @@ async function initializeApp() {
   app.use(pinia)
 
   const sessionStore = useSessionStore()
-  await sessionStore.init()
+  await sessionStore.initialize()
 
   app.use(router)
   app.mount('#app')

@@ -76,7 +76,7 @@ const loadError = computed(
 const isEmpty = computed(() => sheetsStore.rows.length === 0)
 
 onMounted(async () => {
-  await sheetsStore.getOrCreateSpreadsheet()
-  await sheetsStore.loadSpreadsheet()
+  // await sheetsStore.getOrCreateSpreadsheet()
+  // await sheetsStore.loadSpreadsheet()
 })
 </script>

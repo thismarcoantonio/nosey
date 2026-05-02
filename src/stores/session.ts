@@ -1,34 +1,72 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import type { JwtPayload } from '@supabase/supabase-js'
 import { useAsyncStatus, AsyncStatus } from '@/composables/useAsyncStatus'
-import { signIn, signUp, signOut, getSession } from '@/api/auth'
 import { supabase } from '@/helpers/database'
-import type { Session } from '@supabase/supabase-js'
+
+export interface Profile {
+  id: string
+  approved: boolean
+}
 
 export const useSessionStore = defineStore('session', () => {
-  const session = ref<Session | null>(null)
+  const claims = ref<JwtPayload | null>(null)
+  const profile = ref<Profile | null>(null)
   const authStatus = useAsyncStatus()
 
-  const isLoggedIn = computed(() => !!session.value)
+  const isLoggedIn = computed(() => !!claims.value)
+  const isApproved = computed(() => !!profile.value?.approved)
 
-  supabase.auth.onAuthStateChange((_event, newSession) => {
-    session.value = newSession
-  })
+  async function getClaims() {
+    const { data, error } = await supabase.auth.getClaims()
 
-  async function init() {
-    session.value = await getSession()
+    if (error) throw error
+
+    return data?.claims ?? null
+  }
+
+  async function getProfile(userId?: string) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, approved')
+      .eq('id', userId)
+      .single()
+
+    if (error) throw error
+
+    return data
+  }
+
+  async function initialize() {
+    claims.value = await getClaims()
+
+    // If the user is logged in, get the profile attached to the user
+    if (claims.value?.sub) {
+      profile.value = await getProfile(claims.value.sub)
+    }
+
+    const { data } = supabase.auth.onAuthStateChange(async () => {
+      claims.value = await getClaims()
+
+      // If the user is logged in but there's no profile, fetch the profile
+      // Usually requested after login/registration
+      if (claims.value?.sub && !profile.value) {
+        profile.value = await getProfile(claims.value.sub)
+      }
+    })
+    return data.subscription
   }
 
   async function login(email: string, password: string) {
     authStatus.status.value = AsyncStatus.LOADING
     authStatus.errorMessage.value = undefined
     try {
-      session.value = await signIn(email, password)
+      const { data } = await supabase.auth.signInWithPassword({ email, password })
+      if (!data.session) throw new Error('No session returned')
       authStatus.status.value = AsyncStatus.SUCCESS
     } catch (error) {
       authStatus.status.value = AsyncStatus.ERROR
       authStatus.errorMessage.value = error instanceof Error ? error.message : String(error)
-      throw error
     }
   }
 
@@ -36,25 +74,27 @@ export const useSessionStore = defineStore('session', () => {
     authStatus.status.value = AsyncStatus.LOADING
     authStatus.errorMessage.value = undefined
     try {
-      await signUp(email, password)
+      await supabase.auth.signUp({ email, password })
       authStatus.status.value = AsyncStatus.SUCCESS
     } catch (error) {
       authStatus.status.value = AsyncStatus.ERROR
       authStatus.errorMessage.value = error instanceof Error ? error.message : String(error)
-      throw error
     }
   }
 
   async function logout() {
-    await signOut()
-    session.value = null
+    await supabase.auth.signOut()
+    claims.value = null
+    profile.value = null
   }
 
   return {
-    session,
+    claims,
+    profile,
     authStatus,
     isLoggedIn,
-    init,
+    isApproved,
+    initialize,
     login,
     register,
     logout,

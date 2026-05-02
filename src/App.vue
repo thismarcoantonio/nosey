@@ -1,20 +1,6 @@
 <template>
-  <router-view v-if="!loading" />
+  <router-view />
 </template>
-
-<script lang="ts" setup>
-import { ref, onBeforeMount } from 'vue'
-import { useSessionStore } from '@/stores/session'
-
-const loading = ref(true)
-const sessionStore = useSessionStore()
-
-onBeforeMount(async () => {
-  loading.value = true
-  await sessionStore.init()
-  loading.value = false
-})
-</script>
 
 <style>
 @import 'tailwindcss';

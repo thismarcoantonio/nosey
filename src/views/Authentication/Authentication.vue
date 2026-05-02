@@ -150,15 +150,12 @@ const canSubmit = computed(() => {
 
 async function onSubmit() {
   if (!canSubmit.value) return
-  try {
-    if (isLogin.value) {
-      await sessionStore.login(email.value, password.value)
-    } else {
-      await sessionStore.register(email.value, password.value)
-    }
-    $router.push({ name: Routes.DASHBOARD })
-  } catch {
-    // error is displayed via sessionStore.authStatus.errorMessage
+  if (isLogin.value) {
+    await sessionStore.login(email.value, password.value)
+    $router.push({ name: sessionStore.isApproved ? Routes.DASHBOARD : Routes.PENDING })
+  } else {
+    await sessionStore.register(email.value, password.value)
+    $router.push({ name: Routes.PENDING })
   }
 }
 </script>
