@@ -1,12 +1,12 @@
 <template>
   <button
     :type="type ?? 'button'"
-    class="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-slate-300 transition disabled:cursor-not-allowed disabled:opacity-50 disabled:text-neutral-50"
+    class="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-neutral-50 transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:text-neutral-50"
     :disabled="disabled"
     :class="[
-      outlined ? 'border border-slate-700' : 'bg-primary-300',
+      outlined ? 'border border-primary-400 text-slate-700' : 'bg-primary-300',
       fullWidth && 'w-full justify-center',
-      !disabled && 'hover:border-primary-700 hover:bg-slate-800 hover:text-white',
+      !disabled && 'hover:border-primary-700 hover:bg-primary-600 hover:text-white',
     ]"
   >
     <slot />

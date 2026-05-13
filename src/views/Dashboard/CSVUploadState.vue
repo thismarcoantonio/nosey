@@ -5,20 +5,16 @@
     class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-700 px-6 py-16 text-center"
   >
     <div
-      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-950 text-primary-500"
+      class="flex h-12 w-12 items-center text-neutral-50 justify-center rounded-full bg-primary-300"
     >
       <arrow-up-tray-icon class="size-6" />
     </div>
-    <p class="mt-4 text-sm font-medium text-slate-300">No transactions yet</p>
+    <p class="mt-4 text-sm font-medium">No transactions yet</p>
     <p class="mt-1 text-xs text-slate-500">Upload a CSV to get started</p>
-    <button
-      type="button"
-      class="mt-5 flex items-center gap-2 rounded-lg bg-primary-700 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-primary-950/50 transition hover:bg-primary-600"
-      @click="fileInput?.click()"
-    >
+    <main-button class="mt-4" type="button" @click="fileInput?.click()">
       <arrow-up-tray-icon class="size-3.5" />
       Upload CSV
-    </button>
+    </main-button>
     <input
       ref="fileInput"
       type="file"
@@ -29,17 +25,14 @@
   </div>
 
   <!-- Row preview -->
-  <div
-    v-else
-    class="rounded-2xl border border-slate-800 bg-slate-900 max-h-[85dvh] overflow-auto position-relative"
-  >
+  <div v-else class="rounded-2xl border border-dusty-rose bg-canvas max-h-[80dvh] overflow-auto">
     <!-- Header -->
-    <div class="sticky top-0 bg-slate-900">
-      <div class="border-b border-slate-800 px-5 py-4">
-        <p class="text-sm font-semibold text-white mb-1">Review transactions</p>
+    <div class="sticky bg-dusty-rose top-0">
+      <div class="border-b border-dusty-rose px-5 py-4">
+        <p class="text-sm font-semibold mb-1">Review transactions</p>
         <p class="text-xs text-slate-500 mb-4">
           {{ selectedCount }} of {{ rows.length }} selected
-          <span v-if="uncategorisedCount" class="text-primary-400">
+          <span v-if="uncategorisedCount" class="text-ochre font-medium">
             ({{ uncategorisedCount }} left)
           </span>
         </p>
@@ -54,13 +47,13 @@
         </div>
       </div>
 
-      <!-- Select-all footer -->
-      <div class="flex items-center gap-3 border-b border-slate-800 px-4 py-3">
+      <!-- Select-all row -->
+      <div class="flex items-center gap-3 border-b border-dusty-rose/60 px-4 py-3">
         <input
           type="checkbox"
           :checked="allSelected"
           :indeterminate="someSelected"
-          class="accent-primary-600"
+          class="accent-primary-400"
           @change="toggleAll"
         />
         <span class="text-xs text-slate-500">Select all</span>
@@ -68,7 +61,7 @@
     </div>
 
     <!-- Row list -->
-    <ul class="divide-y divide-slate-800">
+    <ul class="divide-y divide-dusty-rose/60">
       <li
         v-for="(row, i) in rows"
         :key="i"
@@ -77,7 +70,7 @@
       >
         <!-- Checkbox -->
         <div class="pt-0.5">
-          <input v-model="row.included" type="checkbox" class="accent-primary-600" />
+          <input v-model="row.included" type="checkbox" class="accent-primary-400" />
         </div>
 
         <!-- Content -->
@@ -85,16 +78,35 @@
           <!-- Top row: description + amount -->
           <div class="flex items-start justify-between gap-2">
             <div>
-              <p class="truncate text-xs font-medium text-slate-200">
+              <p class="truncate text-xs font-medium text-slate-700">
                 {{ row.details }}
               </p>
-              <p v-if="row.description !== 'pos purchase'" class="truncate text-xs text-slate-500">
-                {{ row.description }}
+              <input
+                v-if="row.editingDescription"
+                v-model="row.description"
+                type="text"
+                placeholder="Add description…"
+                class="w-full text-xs text-slate-400 bg-white border border-primary-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                @blur="row.editingDescription = false"
+                @keydown.enter="row.editingDescription = false"
+                @keydown.escape="row.editingDescription = false"
+              />
+              <p
+                v-else
+                class="truncate text-xs transition-colors cursor-text"
+                :class="
+                  row.description
+                    ? 'text-slate-400 hover:text-primary-500'
+                    : 'text-slate-300 hover:text-primary-400 italic'
+                "
+                @click="row.editingDescription = true"
+              >
+                {{ row.description || 'Add description…' }}
               </p>
             </div>
             <span
               class="shrink-0 text-xs font-semibold tabular-nums"
-              :class="row.amount < 0 ? 'text-primary-400' : 'text-emerald-400'"
+              :class="row.amount < 0 ? 'text-primary-500' : 'text-ochre'"
             >
               {{ row.amount }}
             </span>
@@ -102,16 +114,14 @@
 
           <!-- Bottom row: date + category select -->
           <div class="flex items-center gap-2">
-            <span class="text-[11px] text-slate-500">{{ row.date }}</span>
+            <span class="text-[11px] text-slate-400">{{ row.date }}</span>
             <select
               v-if="row.amount < 0"
               v-model="row.category"
               :disabled="!row.included"
-              class="ml-auto rounded border px-2 py-1 text-[11px] focus:outline-none focus:ring-1 focus:ring-primary-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+              class="ml-auto rounded-lg border px-2 py-1 text-[11px] bg-white focus:outline-none focus:ring-1 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-40"
               :class="
-                row.category
-                  ? 'border-slate-700 bg-slate-800 text-slate-300 focus:border-primary-600/60'
-                  : 'border-primary-700/60 bg-primary-950/40 text-primary-300 focus:border-primary-500'
+                row.category ? 'border-primary-200 text-slate-700' : 'border-ochre/50 text-ochre'
               "
             >
               <option value="" disabled>Pick category…</option>
@@ -138,6 +148,7 @@ import { CSVKeys } from '@/types/csv'
 import { Categories } from '@/types/categories'
 import { autoCategorise } from '@/helpers/categories'
 import MainButton from '@/components/MainButton.vue'
+import { useTransactionsStore, TransactionType } from '@/stores/transactions'
 
 type CSVRow = { [K in CSVKeys]: string }
 
@@ -151,12 +162,14 @@ interface PreviewRow {
   type: string
   included: boolean
   category: string
+  editingDescription: boolean
 }
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const rows = ref<PreviewRow[]>([])
+const transactionsStore = useTransactionsStore()
 
-const selectedCount = computed(() => rows.value.filter((r) => r.included).length)
+const selectedCount = computed(() => rows.value.filter((row) => row.included).length)
 const allSelected = computed(
   () => rows.value.length > 0 && selectedCount.value === rows.value.length,
 )
@@ -169,7 +182,7 @@ const uncategorisedCount = computed(
 
 function toggleAll(event: Event) {
   const checked = (event.target as HTMLInputElement).checked
-  rows.value.forEach((r) => (r.included = checked))
+  rows.value.forEach((row) => (row.included = checked))
 }
 
 function reset() {
@@ -178,16 +191,19 @@ function reset() {
 }
 
 async function confirmImport() {
-  // const selected = rows.value.filter((row) => row.included)
-  // const values = selected.map((row) => [
-  //   row.date,
-  //   row.description,
-  //   row.details,
-  //   String(row.amount),
-  //   row.category,
-  // ])
-  // await sheetsStore.appendTransactions(values)
-  reset()
+  const selected = rows.value.filter((row) => row.included)
+  const records = selected.map((row) => ({
+    date: new Date(row.date).toISOString(),
+    description: row.description,
+    details: row.details,
+    type: row.type as TransactionType,
+    amount: row.amount,
+    balance: row.balance,
+  }))
+  await transactionsStore.createTransactions(records)
+  if (!transactionsStore.createTransactionsStatus.error) {
+    reset()
+  }
 }
 
 function uploadCSV(file: string) {
@@ -199,12 +215,14 @@ function uploadCSV(file: string) {
     amount: Number(data[CSVKeys.amount]) || 0,
     balance: Number(data[CSVKeys.balance]) || 0,
     date: data[CSVKeys.date] || '',
-    description: data[CSVKeys.description] || '',
+    description:
+      data[CSVKeys.description] === 'pos purchase' ? '' : data[CSVKeys.description] || '',
     details: data[CSVKeys.details] || '',
     filter: data[CSVKeys.filter] || '',
     type: data[CSVKeys.type] || '',
     included: true,
     category: autoCategorise(data[CSVKeys.details]) ?? '',
+    editingDescription: false,
   }))
 }
 
