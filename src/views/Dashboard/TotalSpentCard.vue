@@ -26,18 +26,16 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
-import { useSheetsStore } from '@/stores/sheets'
 import MainButton from '@/components/MainButton.vue'
 import MainCard from '@/components/MainCard.vue'
 
-const sheetsStore = useSheetsStore()
-
 const timeframe = ref('this-month')
 
-const totalSpent = computed(() =>
-  sheetsStore.rows.reduce((total, row) => {
-    const amount = parseFloat(row[3] ?? '0')
-    return total + (isNaN(amount) ? 0 : amount)
-  }, 0),
+const totalSpent = computed(
+  () => 0,
+  // sheetsStore.rows.reduce((total, row) => {
+  //   const amount = parseFloat(row[3] ?? '0')
+  //   return total + (isNaN(amount) ? 0 : amount)
+  // }, 0),
 )
 </script>

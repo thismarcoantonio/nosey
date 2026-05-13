@@ -57,7 +57,6 @@
 
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue'
-import { useSheetsStore } from '@/stores/sheets'
 import MainHeader from '@/components/MainHeader.vue'
 import MainCard from '@/components/MainCard.vue'
 import TotalSpentCard from './TotalSpentCard.vue'
@@ -65,15 +64,9 @@ import SpendingCard from './SpendingCard.vue'
 import CsvUploadState from './CSVUploadState.vue'
 import DashboardList from './DashboardList.vue'
 
-const sheetsStore = useSheetsStore()
-
-const isLoading = computed(
-  () => sheetsStore.getOrCreateStatus.loading || sheetsStore.loadStatus.loading,
-)
-const loadError = computed(
-  () => sheetsStore.getOrCreateStatus.errorMessage ?? sheetsStore.loadStatus.errorMessage,
-)
-const isEmpty = computed(() => sheetsStore.rows.length === 0)
+const isLoading = computed(() => false)
+const loadError = computed(() => false)
+const isEmpty = computed(() => true)
 
 onMounted(async () => {
   // await sheetsStore.getOrCreateSpreadsheet()

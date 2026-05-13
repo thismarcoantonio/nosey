@@ -137,12 +137,9 @@ import { ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 import { CSVKeys } from '@/types/csv'
 import { Categories } from '@/types/categories'
 import { autoCategorise } from '@/helpers/categories'
-import { useSheetsStore } from '@/stores/sheets'
 import MainButton from '@/components/MainButton.vue'
 
 type CSVRow = { [K in CSVKeys]: string }
-
-const sheetsStore = useSheetsStore()
 
 interface PreviewRow {
   amount: number
@@ -181,15 +178,15 @@ function reset() {
 }
 
 async function confirmImport() {
-  const selected = rows.value.filter((row) => row.included)
-  const values = selected.map((row) => [
-    row.date,
-    row.description,
-    row.details,
-    String(row.amount),
-    row.category,
-  ])
-  await sheetsStore.appendTransactions(values)
+  // const selected = rows.value.filter((row) => row.included)
+  // const values = selected.map((row) => [
+  //   row.date,
+  //   row.description,
+  //   row.details,
+  //   String(row.amount),
+  //   row.category,
+  // ])
+  // await sheetsStore.appendTransactions(values)
   reset()
 }
 

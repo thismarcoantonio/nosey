@@ -49,15 +49,13 @@
 </template>
 
 <script lang="ts" setup>
-import { useSheetsStore } from '@/stores/sheets'
 import { Categories } from '@/types/categories'
 import { computed } from 'vue'
 
 // Column indices matching the append order: date, description, details, amount, category
 const COL = { date: 0, description: 1, details: 2, amount: 3, category: 4 }
 
-const sheetsStore = useSheetsStore()
-const rows = computed(() => sheetsStore.rows)
+const rows = computed(() => [])
 
 function isDebit(amount?: string) {
   if (!amount) return false
