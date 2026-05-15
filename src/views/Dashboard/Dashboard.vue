@@ -41,7 +41,7 @@
       </div>
 
       <!-- Empty state -->
-      <csv-upload-state v-else-if="isEmpty" />
+      <csv-upload-state v-else-if="!transactionsStore.transactions.length" />
 
       <!-- Loaded state -->
       <div v-else class="space-y-6">
@@ -63,13 +63,14 @@ import TotalSpentCard from './TotalSpentCard.vue'
 import SpendingCard from './SpendingCard.vue'
 import CsvUploadState from './CSVUploadState.vue'
 import DashboardList from './DashboardList.vue'
+import { useTransactionsStore } from '@/stores/transactions'
+
+const transactionsStore = useTransactionsStore()
 
 const isLoading = computed(() => false)
 const loadError = computed(() => false)
-const isEmpty = computed(() => true)
 
 onMounted(async () => {
-  // await sheetsStore.getOrCreateSpreadsheet()
-  // await sheetsStore.loadSpreadsheet()
+  await transactionsStore.getTransactions()
 })
 </script>

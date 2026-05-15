@@ -16,6 +16,7 @@ export interface Transaction {
   type: TransactionType
   amount: number
   balance: number
+  category: string
 }
 
 export const useTransactionsStore = defineStore('transactions', () => {

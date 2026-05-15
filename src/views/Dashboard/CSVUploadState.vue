@@ -199,6 +199,7 @@ async function confirmImport() {
     type: row.type as TransactionType,
     amount: row.amount,
     balance: row.balance,
+    category: row.category,
   }))
   await transactionsStore.createTransactions(records)
   if (!transactionsStore.createTransactionsStatus.error) {
